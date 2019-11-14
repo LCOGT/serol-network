@@ -1,0 +1,27 @@
+body {
+  background-color: #0d0c34;
+  background-image: url('../imgs/serol_bg_sm.jpg');
+  color:#fff;
+}
+
+.site {
+  border: 5px solid #aaa;
+  background-color: #0d0c34;
+  padding:5px;
+  display:inline-block;
+  border-radius: 25px;
+}
+.telescope{
+  display:inline-block;
+  height:100px;
+}
+
+.tfn {border-color: #263c6f;}
+.ogg {border-color: #3366dd;}
+.tlv {border-color: #0038b8 ;}
+.coj {border-color:#fac900;}
+.cpt {border-color:#004f00;}
+.elp {border-color:#700000;}
+.lsc {border-color: #f04e23;}
+
+.status { max-width:200px; max-height: 200px;}
