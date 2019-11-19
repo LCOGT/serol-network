@@ -6,7 +6,8 @@
   <meta name="description" content="Serol's Network Overview">
   <meta name="author" content="Edward Gomez">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.8.1">
+  <link rel="stylesheet" href="css/styles.css?v=1.8.4">
+  <script src="https://kit.fontawesome.com/a6b928a86b.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script type="module" src="js/suncalc.js"></script>
@@ -20,10 +21,19 @@
     <h2>Updated {{ updated }}</h2>
     <div id="serol-status" class="status"></div>
     <div v-for="(value, name) in sitecodes" :class="'site ' +name">
-        <h1>{{ name }}</h1>
-        <div v-for="tel in value.tels" class="telescope">
-         <div :id="tel.name" class="status" :title="tel.state"></div>
-        </div>
+        <div class="title">{{ value.name }}</div>
+        <p class="title" v-if="value.weather.day">
+          <span v-if="value.weather.current"><i class="fas fa-sun"></i></span>
+          <span v-else><i class="fad fa-clouds-sun"></i></span>
+        <p  class="title" v-else>
+          <span v-if="value.weather.current"><i class="fas fa-stars"></i></span>
+          <span v-else><i class="fad fa-clouds-moon"></i></span>
+        </p>
+        <div class="telescopes">
+          <div v-for="tel in value.tels" class="telescope">
+           <div :id="tel.name" class="status" :title="tel.state"></div>
+          </div>
+      </div>
     </div>
 </div>
 
@@ -33,27 +43,18 @@
 
   var app = new Vue({
   el: '#sites',
-  props: ['site', 'sitestatus'],
+  props: ['sites', 'sitestatus'],
   data: {
-    siteList: {"coj.clma.0m4a":[{"telescope":"coj.clma.0m4a","event_type":"AVAILABLE","event_reason":"Available for scheduling","start":"2019-10-04T13:26:17Z","end":"2019-10-04T13:26:17Z"}],"coj.clma.0m4b":[{"telescope":"coj.clma.0m4b","event_type":"AVAILABLE","event_reason":"Available for scheduling","start":"2019-10-04T13:26:17Z","end":"2019-10-04T13:26:17Z"}]},
-    sitecodes: {'coj':{'weather':{'current':'NOT_OK_TO_OPEN'},'tels':[{'name':'coj.clma.0m4a','state':'UNKNOWN'},{'name':'coj.clma.0m4b','state':'UNKNOWN'},{'name':'coj.clma.2m0a','state':'UNKNOWN'},{'name':'coj.doma.1m0a','state':'UNKNOWN'},{'name':'coj.domb.1m0a','state':'UNKNOWN'}]},
-                'cpt' :{'weather':{'current':'NOT_OK_TO_OPEN'},'tels':[{'name':'cpt.doma.1m0a','state':'UNKNOWN'},{'name':'cpt.domb.1m0a','state':'UNKNOWN'},{'name':'cpt.domc.1m0a','state':'UNKNOWN'},{'name':'cpt.aqwa.0m4a','state':'UNKNOWN'}]},
-                'elp' :{'weather':{'current':'NOT_OK_TO_OPEN'},'tels': [{'name':"elp.aqwa.0m4a",'state':'UNKNOWN'},{ 'name':"elp.doma.1m0a",'state':'UNKNOWN'}]},
-                'lsc':{'weather':{'current':'NOT_OK_TO_OPEN'},'tels':[{'name':'lsc.doma.1m0a','state':'UNKNOWN'},{'name':'lsc.domb.1m0a','state':'UNKNOWN'},{'name':'lsc.domc.1m0a','state':'UNKNOWN'},{'name':'lsc.aqwa.0m4a','state':'UNKNOWN'},{'name':'lsc.aqwa.0m4b','state':'UNKNOWN'}]},
-                'ogg':{'weather':{'current':'NOT_OK_TO_OPEN'},'tels':[{'name':'ogg.clma.0m4a','state':'UNKNOWN'},{'name':'ogg.clma.0m4b','state':'UNKNOWN'},{'name':'ogg.clma.2m0a','state':'UNKNOWN'}]},
-                'tfn':{'weather':{'current':'NOT_OK_TO_OPEN'},'tels':[{'name':"tfn.aqwa.0m4a",'state':'UNKNOWN'},{'name':"tfn.aqwa.0m4b",'state':'UNKNOWN'}]},
-                'tlv':{'weather':{'current':'NOT_OK_TO_OPEN'},'tels':[{'name':"tlv.doma.1m0a",'state':'UNKNOWN'}]}
-              },
+    sitecodes: {},
     updated: null,
     timer: undefined
   },
-  // computed: {
-  //   isNight(){
-  //       const position = suncalc.getPosition(moment.utc().valueOf(), this.site.lat, this.site.lng);
-  //       return position.altitude < 0;
-  //   },
-  // },
+  computed: {
+
+  },
     created () {
+        this.weather();
+        this.getJsonData();
         this.loadData();
         this.timer = setInterval(this.loadData, 300000)
     },
@@ -75,9 +76,14 @@
           anims.forEach(function(a){a.destroy()})
           addAnimation('serol-status','serol-thinking',true);
           for (var s in this.sitecodes){
+            var day = this.sitecodes[s]['weather']['day'];
             this.sitecodes[s]['tels'].forEach(function(el, i){
               if (json[el.name] != undefined){
-                instate = json[el.name][0]['event_type'];
+                if (day){
+                  instate = 'DAY';
+                }else{
+                  instate = json[el.name][0]['event_type'];
+                }
                 tmparr[s]['tels'][i].state = instate;
                 tmptime = json[el.name][0]['start'];
                 addAnimation(el.name, instate);
@@ -89,21 +95,33 @@
           }
         })
       },
-      loadWeather: function(){
-        for (var s in this.sitecodes){
-        axios.get('https://weather-api.lco.global/query?site='+s+'&datumname=Weather%20Ok%20To%20Open&agg=False&start=2019-10-09T17:00:00Z&end=2019-10-10T17:12:00Z')
-          .then(response => response.data)
-          .then(json => {
 
-          });
-        }
+      getJsonData () {
+        fetch( 'js/sites.js' ).then( resp => resp.json() ).then( json => { this.sitecodes = json; });
       },
       cancelAutoUpdate () {
         clearInterval(this.timer)
+      },
+      weather: async function() {
+        console.log('weather')
+        var now = new Date();
+        var end = now.toISOString();
+        now.setDate(now.getDate()-1);
+        var start = now.toISOString();
+        for (var site in this.sitecodes){
+          var position = SunCalc.getPosition(now, this.sitecodes[site]['lat'], this.sitecodes[site]['lng']);
+          this.sitecodes[site]['weather']['day'] = (position.altitude < 0) ? false : true;
+          this.sitecodes[site]['weather']['current'] = await this.checkWeather(site, start, end);
+        }
+      },
+      checkWeather: async function(site,start,end) {
+        return await axios.get('https://weather-api.lco.global/query?site='+site+'&datumname=Weather%20Ok%20To%20Open&agg=False&start='+start+'&end='+end)
+          .then(response => response.data)
+          .then(json => json[json.length-1]['ValueString']=='true' ? true : false);
       }
-  },
+    }
+});
 
-})
 
 function addAnimation(id, state, serol=false){
 
@@ -116,6 +134,7 @@ function addAnimation(id, state, serol=false){
     'UNKNOWN': 'sleep.json?v=1.3',
     'SEQUENCER_DISABLED' : 'sleep.json?v=1.3',
     'SITE_AGENT_UNRESPONSIVE' : 'sleep.json?v=1.3',
+    'DAY' : 'sleep.json?v=1.3',
     'serol-thinking':'serol.json?v=1.4'
   }
   if (serol == true){
@@ -123,7 +142,6 @@ function addAnimation(id, state, serol=false){
   } else {
     statusfile = "/js/"+size+"/"+statefile[state];
   }
-  console.log(id)
   // anims
   lottie.loadAnimation({
       animationID: id,

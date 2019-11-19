@@ -25,3 +25,19 @@ body {
 .lsc {border-color: #f04e23;}
 
 .status { max-width:200px; max-height: 200px;}
+
+.fa-sun{
+  color:#FFCE33;
+}
+
+.fa-clouds-sun{
+  --fa-secondary-color:#FFCE33;
+}
+
+.title{
+    font-size:2em;
+    display:inline-block;
+}
+.telescopes{
+  display:block;
+}
