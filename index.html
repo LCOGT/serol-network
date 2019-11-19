@@ -6,7 +6,8 @@
   <meta name="description" content="Serol's Network Overview">
   <meta name="author" content="Edward Gomez">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.8.4">
+  <link rel="stylesheet" href="css/styles.css?v=1.8.6">
+  <link rel="stylesheet" href="css/grid.css">
   <script src="https://kit.fontawesome.com/a6b928a86b.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -17,10 +18,19 @@
 </head>
 
 <body>
-  <div id="sites">
-    <h2>Updated {{ updated }}</h2>
-    <div id="serol-status" class="status"></div>
-    <div v-for="(value, name) in sitecodes" :class="'site ' +name">
+  <div id="sites" class="wrapper">
+      <div class="header">
+        <h2>Updated {{ updated }}</h2>
+      </div>
+
+      <div class="worldMap">
+        <img src="imgs/serol_network_map.jpg" class="bgMap" />
+        <div v-for="(value, name) in sitecodes" :class="name" >
+          <div :class="'spot location ' +name" :data-location="name"></div>
+        </div>
+      </div>
+    <div v-for="(value, name) in sitecodes" :class="'site ' +name" >
+        <div class="site-info">
         <div class="title">{{ value.name }}</div>
         <p class="title" v-if="value.weather.day">
           <span v-if="value.weather.current"><i class="fas fa-sun"></i></span>
@@ -33,6 +43,7 @@
           <div v-for="tel in value.tels" class="telescope">
            <div :id="tel.name" class="status" :title="tel.state"></div>
           </div>
+        </div>
       </div>
     </div>
 </div>

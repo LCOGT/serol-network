@@ -10,6 +10,7 @@ body {
   padding:5px;
   display:inline-block;
   border-radius: 25px;
+  z-index: 30;
 }
 .telescope{
   display:inline-block;
@@ -37,7 +38,92 @@ body {
 .title{
     font-size:2em;
     display:inline-block;
+    margin:0;
 }
 .telescopes{
   display:block;
+}
+
+/* Home Page World Map */
+.worldMap {
+	position: relative;
+}
+.worldMap .bgMap {
+	width: 100%;
+	z-index: -9999;
+}
+
+.spot {
+	border-radius: 50%;
+	width: 14px;
+	height: 14px;
+	margin: 0px -13px -13px 0px;
+	background-color: #fff;
+	overflow: visible;
+	position: absolute;
+	z-index: 30;
+}
+
+.site-info {
+	font-family: 'Affogato-Regular', sans-serif;
+	font-size: 0.81em;
+	line-height: 1.3em;
+	color: #fff;
+	-webkit-box-shadow: 2px 2px 19px -1px rgba(0,0,0,0.45);
+	-moz-box-shadow: 2px 2px 19px -1px rgba(0,0,0,0.45);
+	box-shadow: 2px 2px 19px -1px rgba(0,0,0,0.45);
+	opacity: 1;
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+  z-index: 30;
+}
+
+.location:hover {
+	z-index: 50;
+}
+.location:hover .infoBox, .location.shown .infoBox, .arrow.shown {
+	display: block;
+	visibility: visible;
+	opacity: 1;
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+}
+.arrow {
+	position: absolute;
+	visibility: hidden;
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+}
+.location.tlv, .arrow.tlv {
+	left: 55.5%;
+    top: 35.0%;
+}
+.location.lsc, .arrow.lsc {
+	left: 23.014%;
+    top: 81.214%;
+}
+
+.location.china, .arrow.china {
+	left: 68.554%;
+	top: 36.634%;
+}
+.location.ogg, .arrow.ogg {
+	left: 1.584%;
+	top: 49.014%;
+}
+.location.elp, .arrow.elp {
+	left: 11.5%;
+	top: 28%;
+}
+.location.tfn, .arrow.tfn {
+	left: 38.7%;
+	top: 37.7%;
+}
+.location.cpt, .arrow.cpt {
+	left: 50%;
+	top: 67%;
+}
+.location.coj, .arrow.coj {
+	left: 89%;
+	top: 68%;
 }
