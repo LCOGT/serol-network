@@ -6,14 +6,33 @@
   <meta name="description" content="Serol's Network Overview">
   <meta name="author" content="Edward Gomez">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.8.6">
-  <link rel="stylesheet" href="css/grid.css">
+  <link rel="stylesheet" href="css/styles.css?v=1.8.7">
+  <link rel="stylesheet" href="css/grid.css?v=0.3">
   <script src="https://kit.fontawesome.com/a6b928a86b.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script type="module" src="js/suncalc.js"></script>
   <script src="js/lottie.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" type="text/javascript"></script>
+  <script src="js/terminator.js?v=0.2"></script>
+  <script>
+	var map;
+	window.onload = function() {
+		// Add location placemarks
+		var placemarks = new Array();
+		placemarks.push({lon:-156.26,lat:20.71,label:'Haleakala',link:'https://lco.global/site/haleakala',id:'ogg'});
+		placemarks.push({lon:149.06,lat:-31.27,label:'Siding\nSpring',link:'https://lco.global/site/siding-spring',align:"left",id:'coj'});
+		placemarks.push({lon:-16.51,lat:28.13,label:"Teide",link:'https://lco.global/site/teide',align:"left", id:'tfn'});
+		placemarks.push({lon:-70.81,lat:-30.17,label:"Cerro Tololo",link:'https://lco.global/site/cerro-tololo',id:'lsc'});
+		placemarks.push({lon:20.81,lat:-32.38,label:"Sutherland",link:'https://lco.global/site/sutherland',id:'cpt'});
+		placemarks.push({lon:-104.01,lat:30.68,label:"McDonald",link:'https://lco.global/site/mcdonald',id:'elp'});
+		// placemarks.push({lon:80.016667,lat:32.316667,label:"Ali",link:'http://lcogt.net/site/ali',id:'ngq'});
+		//placemarks.push({lon:-120.038889,lat:34.6875,label:'Sedgwick',link:'http://lcogt.net/site/sedgwick',align:"left"});
 
+		map = new WorldMap({placemarks:placemarks,container:'body'});
+		setInterval("map.update()",60000);	// Update every minute
+	}
+	</script>
 
 </head>
 
@@ -23,11 +42,9 @@
         <h2>Updated {{ updated }}</h2>
       </div>
 
-      <div class="worldMap">
-        <img src="imgs/serol_network_map.jpg" class="bgMap" />
-        <div v-for="(value, name) in sitecodes" :class="name" >
-          <div :class="'spot location ' +name" :data-location="name"></div>
-        </div>
+      <div id="map" class="worldMap">
+        	<img id="night" src="imgs/serol_network_map_night.jpg" style="display:none;" />
+        	<img id="day" src="imgs/serol_network_map.jpg" style="display:none;" />
       </div>
     <div v-for="(value, name) in sitecodes" :class="'site ' +name" >
         <div class="site-info">
