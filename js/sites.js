@@ -71,7 +71,10 @@
 		}, {
 			"name": "elp.doma.1m0a",
 			"state": "UNKNOWN"
-		}]
+		},{
+      "name": "elp.domb.1m0a",
+      "state": "UNKNOWN"
+    }]
 	},
 	"lsc": {
 		"code": "lsc",
@@ -147,7 +150,7 @@
 	},
 	"tlv": {
 		"code": "tlv",
-		"name": "Wise Observatory",
+		"name": "Wise",
 		"country": "ISR",
 		"tz": 1,
 		"lat": 28.30,

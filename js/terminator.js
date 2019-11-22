@@ -16,16 +16,11 @@ function WorldMap(conf) {
 
 	this.id = "map";
 	this.placemarks = (typeof conf.placemarks=="object") ? conf.placemarks : new Array();
-  this.container = conf.container
 	this.fs = 11;
 	this.sigma = 6;
 	this.dt = 0;
 	this.counter = 0;
 	this.updaten = 50;
-  this.xscale = 1.1; // Use these if your map is cropped
-  this.yscale = 1.1;
-  this.xoffset = -45.0;
-  this.yoffset = 40.0
 
 	if(typeof conf=="object"){
 		if(typeof conf.id=="string") this.id = conf.id;
@@ -73,7 +68,6 @@ WorldMap.prototype.createMap = function(){
 			elcanvas.setAttribute('height',this.height);
 			elcanvas.setAttribute('id',this.id);
 			el.appendChild(elcanvas);
-
 			// Fix for IE9 Standards mode as .setAttribute('height') doesn't seems to attach to <canvas>
 			if(this.ie && typeof jQuery != 'undefined' && !this.excanvas) $('#'+this.id).css('height',this.height);
 			// For excanvas we need to initialise the newly created <canvas>
@@ -120,7 +114,7 @@ WorldMap.prototype.createMap = function(){
 		this.fs = Math.max(11,Math.round(this.tall/40));
 		this.ctx.clearRect(0,0,this.wide,this.tall);
 		this.ctx.beginPath();
-		this.ctx.font = this.fs+"px sans-serif";
+		this.ctx.font = this.fs+"px Helvetica";
 		this.ctx.fillStyle = 'rgb(0,0,0)';
 		this.ctx.lineWidth = 1.5;
 		var loading = 'Loading sky...';
@@ -132,7 +126,7 @@ WorldMap.prototype.createMap = function(){
 	this.sun = this.sunPos();
 
 	this.d2x = this.wide/360;
-	this.d2y = this.tall/180;
+	this.d2y = this.tall/170;
 
 	// Draw HTML labels - these won't change so only draw them this once
 	var off = jQuery('#'+this.id).offset();
@@ -141,8 +135,8 @@ WorldMap.prototype.createMap = function(){
 	for(var i = 0; i < this.placemarks.length ; i++){
 		p = this.placemarks[i];
 		if(!p.x){
-			p.x = ((p.lon+180*this.xscale)*this.d2x)+this.xoffset;
-			p.y = (this.tall-(p.lat+90*this.yscale)*this.d2y) +this.yoffset;
+			p.x = (p.lon+180)*this.d2x;
+			p.y = (this.tall-(p.lat+90)*this.d2y);
 		}
 		this.ctx.fillRect(p.x-this.d/2,p.y-this.d/2,this.d,this.d);
 		align = (typeof p.align=="string" && p.align=="left") ? "left" : "right";
@@ -154,7 +148,7 @@ WorldMap.prototype.createMap = function(){
 			if(w > this.fs*p.label.length) w = this.fs*p.label.length;
 		}
 		label = ((p.link) ? '<a href="'+p.link+'" target="_parent" style="color:white;text-decoration:none;text-shadow: 0px 0px 4px #000;font-size:'+this.fs+'px;padding:'+((align=="left") ? '0px '+(this.d*1.5)+'px 0px 0px' : '0px 0px 0px '+(this.d*1.5)+'px')+';">' : '')+p.label+((p.link) ? '</a>' : '');
-		jQuery(this.container).append('<div class="worldmap_label" style="position:absolute;top:'+(off.top+p.y-(this.fs/2))+'px;left:'+((align=="left") ? off.left+p.x+this.d/2-w: off.left+p.x-this.d/2)+'px;text-align:'+((align=="left") ? "right" : "left")+';width:'+w+'px;height:'+(this.fs)+'px;display:block;font-size:'+this.fs+'px;'+((p.link) ? '' : 'padding:0px 0px 0px '+(this.d*1.5)+'px;')+';z-index:20;">'+label+'</div>');
+		jQuery('body').append('<div class="worldmap_label" style="position:absolute;top:'+(off.top+p.y-(this.fs/2))+'px;left:'+((align=="left") ? off.left+p.x+this.d/2-w: off.left+p.x-this.d/2)+'px;text-align:'+((align=="left") ? "right" : "left")+';width:'+w+'px;height:'+(this.fs)+'px;display:block;font-size:'+this.fs+'px;'+((p.link) ? '' : 'padding:0px 0px 0px '+(this.d*1.5)+'px;')+';z-index:20;">'+label+'</div>');
 
 	}
 
@@ -162,15 +156,17 @@ WorldMap.prototype.createMap = function(){
 	var credit = 'Powered by Las Cumbres Observatory';
 	// Float a transparent link on top of the credit text
 	if(typeof jQuery != 'undefined') {
-		jQuery(this.container).append('<div id="'+this.id+'_framerate" style="position:absolute;padding:0px;bottom:5px;right:5px;z-index:20;font-size:12px;"></div>');
+		if($('#'+this.id+'_credit').length == 0){
+			jQuery('body').append('<div id="'+this.id+'_credit" style="position:absolute;padding:0px;top:'+(off.top+parseInt(this.tall)-5-11)+';left:'+(off.left+5)+';z-index:20;"><a href="http://lcogt.net/network" style="margin:4px;font-size:11px;text-shadow: 0px 0px 4px '+((this.sun.dec < 0) ? 'white':'black')+';color:'+((this.sun.dec < 0) ? 'black':'white')+';text-decoration:none;" title="Created by the Las Cumbres Observatory Global Telescope">'+credit+'</a></div>');
+		}
+		jQuery('body').append('<div id="'+this.id+'_framerate" style="position:absolute;padding:0px;bottom:5px;right:5px;z-index:20;font-size:12px;"></div>');
 	}
 
 	buffer = document.createElement('canvas');
-	buffer.style.display='block';
+	// buffer.style.display='block';
 	buffer.setAttribute('width',this.wide);
 	buffer.setAttribute('height',this.tall);
 	buffer.setAttribute('id','buffer');
-  buffer.setAttribute('style','display:none;');
 	document.body.appendChild(buffer);
 	// Fix for IE9 Standards mode as .setAttribute('height') doesn't seems to attach to <canvas>
 	if(this.ie && typeof jQuery != 'undefined' && !this.excanvas) $('#buffer').css('height',this.tall);
@@ -245,8 +241,8 @@ WorldMap.prototype.draw = function() {
 			tlat = Math.atan2(-Math.cos((lon+ha)*this.d2r),Math.tan(this.sun.dec))*this.r2d;
 			if(tlat < -90) tlat += 180
 			if(tlat > 90) tlat -= 180
-			x.push(((lon+180)*this.d2x)*this.xscale + this.xoffset);
-			y.push((this.tall-(tlat+90)*this.d2y)*this.yscale);	// y is inverted
+			x.push((lon+180)*this.d2x);
+			y.push(this.tall-(tlat+90)*this.d2y);	// y is inverted
 		}
 
 		//console.log("Calculated terminator points:" + (new Date() - this.clock) + "ms");

@@ -25,7 +25,6 @@ body {
 .elp {border-color:#700000;}
 .lsc {border-color: #f04e23;}
 
-.status { max-width:200px; max-height: 200px;}
 
 .fa-sun{
   color:#FFCE33;
@@ -39,12 +38,14 @@ body {
     font-size:2em;
     display:inline-block;
     margin:0;
+    padding:5px 0;
 }
 .telescopes{
   display:block;
 }
 
 /* World Map */
+	#map { height:100%; width: 100%; position:relative; }
 .worldMap {
   position:relative;
   display:inline-block;
@@ -127,4 +128,32 @@ body {
 .worldMap .spot.coj {
 	left: 89%;
 	top: 68%;
+}
+
+#buffer {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .status { max-width:50px; max-height: 50px;}
+
+  .status svg{
+    max-width: 50px;
+  }
+}
+
+@media (min-width: 1024px){
+.status { max-width:75px; max-height: 75px;}
+  .status svg {
+    max-width: 75px;
+    width:100%;
+  }
+}
+
+@media (min-width: 1200px){
+.status { max-width:100px; max-height: 100px;}
+  .status svg {
+    max-width: 100px;
+    width:100%;
+  }
 }
