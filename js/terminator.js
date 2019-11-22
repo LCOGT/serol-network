@@ -126,7 +126,7 @@ WorldMap.prototype.createMap = function(){
 	this.sun = this.sunPos();
 
 	this.d2x = this.wide/360;
-	this.d2y = this.tall/170;
+	this.d2y = this.tall/180;
 
 	// Draw HTML labels - these won't change so only draw them this once
 	var off = jQuery('#'+this.id).offset();
@@ -134,10 +134,18 @@ WorldMap.prototype.createMap = function(){
 
 	for(var i = 0; i < this.placemarks.length ; i++){
 		p = this.placemarks[i];
+    d2x =this.wide/370; // Tuned for non-mercator stretch map
 		if(!p.x){
-			p.x = (p.lon+180)*this.d2x;
-			p.y = (this.tall-(p.lat+90)*this.d2y);
+			p.x = (p.lon+180)*d2x;
+      if (p.lat < 0){
+        // Tuned for non-mercator stretch map
+        d2y = this.tall/240;
+      } else {
+        d2y = this.tall/190;
+      }
+			p.y = (this.tall-(p.lat+90)*d2y);
 		}
+    console.log(p.x,p.y);
 		this.ctx.fillRect(p.x-this.d/2,p.y-this.d/2,this.d,this.d);
 		align = (typeof p.align=="string" && p.align=="left") ? "left" : "right";
 		if(align=="right"){
