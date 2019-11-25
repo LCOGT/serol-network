@@ -137,23 +137,26 @@ body {
 @media (min-width: 768px) {
   .status { max-width:50px; max-height: 50px;}
 
-  .status svg{
+  .status canvas{
     max-width: 50px;
+    max-height: 50px;
   }
 }
 
 @media (min-width: 1024px){
 .status { max-width:75px; max-height: 75px;}
-  .status svg {
+  .status canvas {
     max-width: 75px;
+    max-height: 75px;
     width:100%;
   }
 }
 
 @media (min-width: 1200px){
 .status { max-width:100px; max-height: 100px;}
-  .status svg {
+  .status canvas {
     max-width: 100px;
+    max-height: 100px;
     width:100%;
   }
 }
