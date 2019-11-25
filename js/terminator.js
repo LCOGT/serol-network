@@ -145,7 +145,6 @@ WorldMap.prototype.createMap = function(){
       }
 			p.y = (this.tall-(p.lat+90)*d2y);
 		}
-    console.log(p.x,p.y);
 		this.ctx.fillRect(p.x-this.d/2,p.y-this.d/2,this.d,this.d);
 		align = (typeof p.align=="string" && p.align=="left") ? "left" : "right";
 		if(align=="right"){

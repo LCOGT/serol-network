@@ -76,89 +76,122 @@
     updated: null,
     timer: undefined
   },
-  computed: {
-
-  },
-  created: async function () {
+  created() {
     var self = this;
-      this.getJsonData();
-      await this.siteCheck();
-      this.timer = setInterval(function(){
-          Promise.all([self.siteCheck()])
-        },10000);
+    this.getJsonData();
+    this.timer = setInterval(function(){
+        Promise.all([self.siteCheck()])
+      },10000);
   },
-    beforeDestroy() {
+  beforeDestroy() {
       if (this.timer) {
         clearInterval(this.timer)
         this.timer = undefined
       }
     },
+    mounted() {
+      var now = new Date();
+      var end = now.toISOString();
+      now.setDate(now.getDate()-1);
+      var start = now.toISOString();
+      Promise.all([this.checkWeather('ogg',start,end),
+                this.checkWeather('coj',start,end),
+                this.checkWeather('tfn',start,end),
+                this.checkWeather('tlv',start,end),
+                this.checkWeather('cpt',start,end),
+                this.checkWeather('lsc',start,end),
+                this.checkWeather('elp',start,end),
+                this.getTelData()])
+       .then(values => {
+         var tmparr = this.sitecodes;
+         var now = new Date();
+         for (var value in values){
+           if (values[value]['site'] != undefined) {
+             var site = values[value]['site'];
+             var position = SunCalc.getPosition(now, this.sitecodes[site]['lat'], this.sitecodes[site]['lng']);
+             tmparr[site]['weather']['day'] = (position.altitude < 0) ? false : true;
+             tmparr[site]['weather']['current'] =  values[value]['state'];
+           }else{
+             this.loadTelData(values[value]['data']);
+           }
+         }
+         this.setAnimations();
+       })
+       .catch(error => {
+          this.msg = "This didn't work";
+        });
+    },
     methods: {
       siteCheck: async function(){
         await this.weather();
-        await this.loadData();
+        let response = await this.loadData();
+        loadTelData(response['data'])
         this.setAnimations();
       },
-      loadData: async function() {
-        console.log('site status');
-        try {
-            let response = await axios.get('https://observe.lco.global/api/telescope_states/?format=json')
-            json = response.data;
-            this.updated = Date();
-            var tmparr = this.sitecodes;
-            var instate;
-            for (var s in this.sitecodes){
-              var day = this.sitecodes[s]['weather']['day'];
-              this.sitecodes[s]['tels'].forEach(function(el, i){
-                if (json[el.name] != undefined){
-                  if (day){
-                    instate = 'DAY';
-                  }else{
-                    instate = json[el.name][0]['event_type'];
-                  }
-                  tmparr[s]['tels'][i].state = instate;
-                  tmptime = json[el.name][0]['start'];
-                  console.log(el.name, instate);
-                }
-              })
-            }
-          } catch(error) {
-            console.log(error);
-          }
+      getTelData() {
+        return axios.get('https://observe.lco.global/api/telescope_states/?format=json')
       },
-      setAnimations() {
-        // addAnimation('serol-status','serol-thinking',true);
-          for (var s in this.sitecodes){
-            this.sitecodes[s]['tels'].forEach(function(el, i){
-                addAnimation(el.name, el.state);
-                console.log(el.name, el.state);
-            })
-          }
-        // lottie.destroy('serol-status')
+      loadTelData(json) {
+        this.updated = Date();
+        var tmparr = this.sitecodes;
+        var instate;
+        for (var s in this.sitecodes){
+          var day = this.sitecodes[s]['weather']['day'];
+          this.sitecodes[s]['tels'].forEach(function(el, i){
+            if (json[el.name] != undefined){
+              if (day){
+                instate = 'DAY';
+              }else{
+                instate = json[el.name][0]['event_type'];
+              }
+              tmparr[s]['tels'][i].state = instate;
+              tmptime = json[el.name][0]['start'];
+              console.log(el.name, instate);
+            }
+          })
+        }
+      },
+      setTelData: async function(){
+        let response = await this.getTelData();
+        loadTelData(response.data);
       },
       getJsonData () {
-        fetch( 'js/sites.js?v1=1.1' ).then( resp => resp.json() ).then( json => { this.sitecodes = json; });
+        fetch( 'js/sites.js' ).then( resp => resp.json() ).then( json => { this.sitecodes = json; });
       },
       cancelAutoUpdate () {
         clearInterval(this.timer)
       },
       weather: async function() {
+        var tmparr = this.sitecodes;
         var now = new Date();
         var end = now.toISOString();
         now.setDate(now.getDate()-1);
         var start = now.toISOString();
         for (var site in this.sitecodes){
           var position = SunCalc.getPosition(now, this.sitecodes[site]['lat'], this.sitecodes[site]['lng']);
-          this.sitecodes[site]['weather']['day'] = (position.altitude < 0) ? false : true;
-          this.sitecodes[site]['weather']['current'] = await this.checkWeather(site, start, end);
-          console.log(this.sitecodes[site]['weather']['current']);
+          tmparr[site]['weather']['day'] = (position.altitude < 0) ? false : true;
+          state = await this.checkWeather(site, start, end);
+          tmparr[site]['weather']['current'] =  state['state'];
+          console.log(tmparr[site]['weather']['current']);
         }
         console.log('weather done')
       },
-      checkWeather: async function(site,start,end) {
-        return await axios.get('https://weather-api.lco.global/query?site='+site+'&datumname=Weather%20Ok%20To%20Open&agg=False&start='+start+'&end='+end)
+      checkWeather: function(site,start,end) {
+        return axios.get('https://weather-api.lco.global/query?site='+site+'&datumname=Weather%20Ok%20To%20Open&agg=False&start='+start+'&end='+end)
           .then(response => response.data)
-          .then(json => json[json.length-1]['ValueString']=='true' ? true : false);
+          .then(json => {
+            var state = json[json.length-1]['ValueString']=='true' ? true : false;
+            return {'state':state, 'site':site}
+        });
+      },
+      setAnimations() {
+        // addAnimation('serol-status','serol-thinking',true);
+          for (var s in this.sitecodes){
+            this.sitecodes[s]['tels'].forEach(function(el, i){
+                addAnimation(el.name, el.state);
+            })
+          }
+        // lottie.destroy('serol-status')
       }
     }
 });
@@ -173,7 +206,7 @@ function addAnimation(id, state, serol=false){
     'NOT_OK_TO_OPEN': 'angry.json?v=1.5.1',
     'ENCLOSURE_INTERLOCK': 'sick.json?v=1.3',
     'UNKNOWN': 'sleep.json?v=1.3',
-    'SEQUENCER_DISABLED' : 'sleep.json?v=1.3',
+    'SEQUENCER_DISABLED' : 'sleep.json?v=1.3.1',
     'SITE_AGENT_UNRESPONSIVE' : 'sleep.json?v=1.3',
     'DAY' : 'sleep.json?v=1.3',
     'serol-thinking':'serol.json?v=1.4'
@@ -183,6 +216,7 @@ function addAnimation(id, state, serol=false){
   } else {
     statusfile = "/js/"+size+"/"+statefile[state];
   }
+  // statusfile = "/js/1m0/1m-sleep-compound-24.json";
   // anims
   console.log("Setting status " +id);
   lottie.destroy(id);
@@ -190,7 +224,7 @@ function addAnimation(id, state, serol=false){
       name : id,
       animationID: id,
       container: document.getElementById(id),
-      renderer: 'svg',
+      renderer: 'canvas',
       loop: true,
       autoplay: true,
       autoloadSegments: true,
