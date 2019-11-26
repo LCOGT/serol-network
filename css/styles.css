@@ -1,7 +1,34 @@
 body {
+      font-family: 'Oswald', sans-serif;
   background-color: #0d0c34;
   background-image: url('../imgs/serol_bg_sm.jpg');
   color:#fff;
+}
+
+.heading {
+  padding:5px;
+    font-weight: 300;
+    color: #fff;
+    text-align: left;
+    font-size:2em;
+}
+.update {
+  background-color: #ef5030;
+  border-radius: 25px;
+  font-size:70%;
+}
+
+.controls i {
+  font-size: 2em;
+}
+
+.serol {
+  width:100%;
+  height:100%;
+}
+
+.logo img{
+ width: 100%
 }
 
 .site {
@@ -31,6 +58,18 @@ body {
 }
 
 .fa-clouds-sun{
+  --fa-secondary-color:#FFCE33;
+}
+
+.fa-toggle-on {
+  --fa-primary-color:green;
+  --fa-primary-opacity:1.0;
+  --fa-secondary-color:white;
+  --fa-secondary-opacity:1.0;
+}
+
+.fa-toggle-off {
+  --fa-primary-color:white;
   --fa-secondary-color:#FFCE33;
 }
 
@@ -67,7 +106,6 @@ body {
 }
 
 .site-info {
-	font-family: 'Affogato-Regular', sans-serif;
 	font-size: 0.81em;
 	line-height: 1.3em;
 	color: #fff;

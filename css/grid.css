@@ -9,8 +9,21 @@
 .header{
   grid-row-start:1;
   grid-column-start:1;
-  grid-column-end:12;
+  grid-column-end:6;
 }
+
+.serol {
+  grid-column-start: 4;
+  grid-column-end: 6;
+  grid-row-start:2;
+  grid-row-end:5;
+}
+ .logo{
+   grid-column-start: 1;
+   grid-column-start: 3;
+   grid-row-start:2;
+   grid-row-end:4;
+ }
 
 .site.tfn{
   grid-column-start: 6;
@@ -42,7 +55,7 @@
 
 .site.lsc{
   grid-column-start: 1;
-  grid-column-end: 7;
+  grid-column-end: 6;
   grid-row-start: 9;
   grid-row-end: 12;
 }

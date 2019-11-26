@@ -6,8 +6,8 @@
   <meta name="description" content="Serol's Network Overview">
   <meta name="author" content="Edward Gomez">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.8.11">
-  <link rel="stylesheet" href="css/grid.css?v=0.3.4">
+  <link rel="stylesheet" href="css/styles.css?v=1.8.13">
+  <link rel="stylesheet" href="css/grid.css?v=0.3.7">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.9/lottie.min.js"></script>
   <script src="https://kit.fontawesome.com/a6b928a86b.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -26,11 +26,16 @@
 		placemarks.push({lon:-70.81,lat:-30.17,label:"Cerro Tololo",link:'https://lco.global/observatory/sites/cerro-tololo',id:'lsc'});
 		placemarks.push({lon:20.81,lat:-32.38,label:"Sutherland",link:'https://lco.global/observatory/sites/sutherland',id:'cpt'});
 		placemarks.push({lon:-104.01,lat:30.68,label:"McDonald",link:'https://lco.global/observatory/sites/mcdonald',id:'elp'});
-		placemarks.push({lon:30.595833,lat:34.763333,label:"Wise",link:'https:/lco.global/observatory/sites/wise',id:'tlv'});
+		placemarks.push({lon:30.595833,lat:34.763333,label:"Wise",link:''});
 		//placemarks.push({lon:-120.038889,lat:34.6875,label:'Sedgwick',link:'http://lcogt.net/site/sedgwick',align:"left"});
 
 		map = new WorldMap({placemarks:placemarks,container:'body'});
 		setInterval("map.update()",60000);	// Update every minute
+    $('.controls i').click( function(e){
+      $('.fa-toggle-on').toggle();
+      $('.fa-toggle-off').toggle();
+      $('.site').toggle();
+    });
 	}
 	</script>
 
@@ -39,9 +44,26 @@
 <body>
   <div id="sites" class="wrapper">
       <div class="header">
-        <h2>Updated {{ updated }}</h2>
+        <div class="heading">
+          Live updates from our Global Telescope Network
+        </div>
+        <div class="heading">
+          <div class="update">
+          Updated: {{updated}}
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        Show sites<br/>
+        <i class="fad fa-toggle-on"></i>
+        <i class="fad fa-toggle-off" style="display:none;"></i>
+      </div>
+      <div class="logo">
+        <img src="imgs/LCO-logo.png" />
       </div>
 
+      <div id="serol-status" class="serol">
+      </div>
       <div id="map" class="worldMap">
         	<img id="night" src="imgs/map1-night-01.jpg" style="display:none;" />
         	<img id="day" src="imgs/map1-day-01.jpg" style="display:none;" />
@@ -90,6 +112,7 @@
       }
     },
     mounted() {
+      addAnimation('serol-status','serol-active',true);
       var now = new Date();
       var end = now.toISOString();
       now.setDate(now.getDate()-1);
@@ -120,19 +143,24 @@
        .catch(error => {
           this.msg = "This didn't work";
         });
+      addAnimation('serol-status','serol-plain',true);
     },
     methods: {
       siteCheck: async function(){
+        addAnimation('serol-status','serol-active',true);
         await this.weather();
         let response = await this.getTelData();
         this.loadTelData(response['data'])
         this.setAnimations();
+        addAnimation('serol-status','serol-plain',true);
       },
       getTelData() {
         return axios.get('https://observe.lco.global/api/telescope_states/?format=json')
       },
       loadTelData(json) {
-        this.updated = Date();
+        var tmpdate = new Date();
+        var options = { dateStyle:"long", timeStyle:"long" }
+        this.updated = tmpdate.toLocaleDateString("en-GB", options);
         var tmparr = this.sitecodes;
         var instate;
         for (var s in this.sitecodes){
@@ -177,18 +205,20 @@
         return axios.get('https://weather-api.lco.global/query?site='+site+'&datumname=Weather%20Ok%20To%20Open&agg=False&start='+start+'&end='+end)
           .then(response => response.data)
           .then(json => {
-            var state = json[json.length-1]['ValueString']=='true' ? true : false;
+            if (json!=null){
+              var state = json[json.length-1]['ValueString']=='true' ? true : false;
+            }else{
+              var state = false;
+            }
             return {'state':state, 'site':site}
         });
       },
       setAnimations() {
-        // addAnimation('serol-status','serol-thinking',true);
           for (var s in this.sitecodes){
             this.sitecodes[s]['tels'].forEach(function(el, i){
                 addAnimation(el.name, el.state);
             })
           }
-        // lottie.destroy('serol-status')
       }
     }
 });
@@ -199,21 +229,22 @@ function addAnimation(id, state, serol=false){
   var size = id.substr(9,3);
   var statusfile;
   var statefile = {
-    'AVAILABLE' : 'active.json?v=1.3.2',
-    'NOT_OK_TO_OPEN': 'angry.json?v=1.5.3',
-    'ENCLOSURE_INTERLOCK': 'sick.json?v=1.3.2',
-    'UNKNOWN': 'sleep.json?v=1.3.2',
-    'SEQUENCER_DISABLED' : 'sleep.json?v=1.3.2',
-    'SITE_AGENT_UNRESPONSIVE' : 'sleep.json?v=1.3.2',
-    'DAY' : 'sleep.json?v=1.3.2',
-    'serol-thinking':'serol.json?v=1.4'
+    'AVAILABLE' : 'active.json?v=1.3.4',
+    'NOT_OK_TO_OPEN': 'angry.json?v=1.3.4',
+    'ENCLOSURE_INTERLOCK': 'sick.json?v=1.3.4',
+    'UNKNOWN': 'sleep.json?v=1.3.4',
+    'SEQUENCER_DISABLED' : 'sick.json?v=1.3.4',
+    'SITE_AGENT_UNRESPONSIVE' : 'sleep.json?v=1.3.4',
+    'DAY' : 'sleep.json?v=1.3.4',
+    'serol-active':'serol-active.json?v=1.4',
+    'serol-plain':'serol.json?v=1.4',
   }
   if (serol == true){
     statusfile = '/js/'+statefile[state];
   } else {
     statusfile = "/js/"+size+"/"+statefile[state];
   }
-  // statusfile = "/js/1m0/1m-sleep-compound-24.json";
+  // statusfile = "/js/0m4/sick.json?v=x1";
   // anims
   lottie.destroy(id);
   lottie.loadAnimation({
@@ -230,6 +261,8 @@ function addAnimation(id, state, serol=false){
       path: statusfile
   });
 }
+
+
 
 </script>
 </body>
