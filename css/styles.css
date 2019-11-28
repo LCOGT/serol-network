@@ -3,6 +3,7 @@ body {
   background-color: #0d0c34;
   background-image: url('../imgs/serol_bg_sm.jpg');
   color:#fff;
+  font-size:60%;
 }
 
 .heading {
@@ -16,10 +17,23 @@ body {
   background-color: #ef5030;
   border-radius: 25px;
   font-size:70%;
+  padding-left: 10px;
 }
 
 .controls i {
   font-size: 2em;
+}
+
+img.logo{
+ width: 100%;
+ max-width:300px;
+ max-heigh:100px;
+}
+
+.label img {
+  max-height: 25px;
+  max-width: 25px;
+  display:inline-block;
 }
 
 .serol {
@@ -27,8 +41,11 @@ body {
   height:100%;
 }
 
-.logo img{
- width: 100%
+.container {
+  background-color: #0d0c34;
+  padding:5px;
+  display:inline-block;
+  border-radius: 25px;
 }
 
 .site {
@@ -179,6 +196,9 @@ body {
     max-width: 50px;
     max-height: 50px;
   }
+  body {
+    font-size: 70%;
+  }
 }
 
 @media (min-width: 1024px){
@@ -188,6 +208,9 @@ body {
     max-height: 75px;
     width:100%;
   }
+  body {
+    font-size: 80%;
+  }
 }
 
 @media (min-width: 1200px){
@@ -196,5 +219,8 @@ body {
     max-width: 100px;
     max-height: 100px;
     width:100%;
+  }
+  body {
+    font-size: 100%;
   }
 }

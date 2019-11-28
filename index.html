@@ -6,11 +6,11 @@
   <meta name="description" content="Serol's Network Overview">
   <meta name="author" content="Edward Gomez">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.8.13">
-  <link rel="stylesheet" href="css/grid.css?v=0.3.7">
+  <link rel="stylesheet" href="css/styles.css?v=1.8.16">
+  <link rel="stylesheet" href="css/grid.css?v=0.3.8">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.9/lottie.min.js"></script>
   <script src="https://kit.fontawesome.com/a6b928a86b.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script type="module" src="js/suncalc.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" type="text/javascript"></script>
@@ -26,8 +26,7 @@
 		placemarks.push({lon:-70.81,lat:-30.17,label:"Cerro Tololo",link:'https://lco.global/observatory/sites/cerro-tololo',id:'lsc'});
 		placemarks.push({lon:20.81,lat:-32.38,label:"Sutherland",link:'https://lco.global/observatory/sites/sutherland',id:'cpt'});
 		placemarks.push({lon:-104.01,lat:30.68,label:"McDonald",link:'https://lco.global/observatory/sites/mcdonald',id:'elp'});
-		placemarks.push({lon:30.595833,lat:34.763333,label:"Wise",link:''});
-		//placemarks.push({lon:-120.038889,lat:34.6875,label:'Sedgwick',link:'http://lcogt.net/site/sedgwick',align:"left"});
+		placemarks.push({lon:30.595833,lat:34.763333,label:"Wise",link:'https://lco.global/observatory/sites/wise'});
 
 		map = new WorldMap({placemarks:placemarks,container:'body'});
 		setInterval("map.update()",60000);	// Update every minute
@@ -58,9 +57,26 @@
         <i class="fad fa-toggle-on"></i>
         <i class="fad fa-toggle-off" style="display:none;"></i>
       </div>
-      <div class="logo">
-        <img src="imgs/LCO-logo.png" />
+      <div class="key container">
+        Telescopes:
+
+        <span class="label">
+          <img src="imgs/0m4.svg" />
+          0.4-meter
+        </span>
+        <span class="label">
+          <img src="imgs/1m0.svg" />
+          1-meter
+        </span>
+        <span class="label">
+          <img src="imgs/2m0.svg" />
+          2-meter
+        </span>
+        <div>
+          <img src="imgs/LCO-logo.png"  class="logo" />
+        </div>
       </div>
+
 
       <div id="serol-status" class="serol">
       </div>
