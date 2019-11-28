@@ -1,13 +1,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Serol's Network Overview</title>
   <meta name="description" content="Serol's Network Overview">
   <meta name="author" content="Edward Gomez">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.8.16">
-  <link rel="stylesheet" href="css/grid.css?v=0.3.8">
+  <link rel="stylesheet" href="css/styles.css?v=1.8.18">
+  <link rel="stylesheet" href="css/grid.css?v=0.3.9">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.9/lottie.min.js"></script>
   <script src="https://kit.fontawesome.com/a6b928a86b.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
@@ -48,15 +49,17 @@
         </div>
         <div class="heading">
           <div class="update">
-          Updated: {{updated}}
+          Updated: [[updated]]
           </div>
         </div>
       </div>
+
       <div class="controls">
-        Show sites<br/>
+        Show all sites<br/>
         <i class="fad fa-toggle-on"></i>
         <i class="fad fa-toggle-off" style="display:none;"></i>
       </div>
+
       <div class="key container">
         Telescopes:
 
@@ -81,12 +84,12 @@
       <div id="serol-status" class="serol">
       </div>
       <div id="map" class="worldMap">
-        	<img id="night" src="imgs/map1-night-01.jpg" style="display:none;" />
-        	<img id="day" src="imgs/map1-day-01.jpg" style="display:none;" />
+        	<img id="day" src="imgs/map-edit1-01.jpg" style="display:none;" />
+        	<img id="night" src="imgs/map-night-edit1-01.jpg" style="display:none;" />
       </div>
     <div v-for="(value, name) in sitecodes" :class="'site ' +name" >
         <div class="site-info">
-        <div class="title">{{ value.name }}</div>
+        <div class="title">[[ value.name ]]</div>
         <p class="title" v-if="value.weather.day">
           <span v-if="value.weather.current"><i class="fas fa-sun"></i></span>
           <span v-else><i class="fad fa-clouds-sun"></i></span>
@@ -107,6 +110,7 @@
   var display_
 
   var app = new Vue({
+  delimiters: ['[[', ']]'],
   el: '#sites',
   props: ['sites', 'sitestatus'],
   data: {
@@ -168,7 +172,8 @@
         let response = await this.getTelData();
         this.loadTelData(response['data'])
         this.setAnimations();
-        addAnimation('serol-status','serol-plain',true);
+        setTimeout(function(){addAnimation('serol-status','serol-plain',true);}, 5000); /* here just to show the animation */
+
       },
       getTelData() {
         return axios.get('https://observe.lco.global/api/telescope_states/?format=json')
@@ -176,7 +181,7 @@
       loadTelData(json) {
         var tmpdate = new Date();
         var options = { dateStyle:"long", timeStyle:"long" }
-        this.updated = tmpdate.toLocaleDateString("en-GB", options);
+        this.updated = tmpdate.toUTCString(); //tmpdate.toLocaleDateString("en-GB", options);
         var tmparr = this.sitecodes;
         var instate;
         for (var s in this.sitecodes){

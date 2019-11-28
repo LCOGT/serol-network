@@ -100,93 +100,17 @@ img.logo{
   display:block;
 }
 
-/* World Map */
-	#map { height:100%; width: 100%; position:relative; }
 .worldMap {
-  position:relative;
-  display:inline-block;
-  width:100%;
-}
-.worldMap img {
-  display:block;
-	width: 100%;
-}
-
-.spot {
-	overflow: visible;
-	position: absolute;
-	z-index: 30;
-  width:2%;
-  height:3%;
-  border-radius:50%;
-  background:#fff;
-}
-
-.site-info {
-	font-size: 0.81em;
-	line-height: 1.3em;
-	color: #fff;
-	-webkit-box-shadow: 2px 2px 19px -1px rgba(0,0,0,0.45);
-	-moz-box-shadow: 2px 2px 19px -1px rgba(0,0,0,0.45);
-	box-shadow: 2px 2px 19px -1px rgba(0,0,0,0.45);
-	opacity: 1;
-	-webkit-transition: opacity 0.5s;
-	transition: opacity 0.5s;
-  z-index: 30;
-}
-
-.location:hover {
-	z-index: 50;
-}
-.location:hover .infoBox, .location.shown .infoBox {
-	display: block;
-	visibility: visible;
-	opacity: 1;
-	-webkit-transition: opacity 0.5s;
-	transition: opacity 0.5s;
-}
-.arrow {
-	position: absolute;
-	visibility: hidden;
-	-webkit-transition: opacity 0.5s;
-	transition: opacity 0.5s;
-}
-.worldMap .spot.tlv {
-	left: 55.5%;
-    top: 35.0%;
-}
-.worldMap .spot.lsc {
-	left: 23.014%;
-    top: 81.214%;
-}
-
-.worldMap .spot.china {
-	left: 68.554%;
-	top: 36.634%;
-}
-.worldMap .spot.ogg {
-	left: 1.584%;
-	top: 49.014%;
-}
-.worldMap .spot.elp {
-	left: 11.5%;
-	top: 28%;
-}
-.worldMap .spot.tfn {
-	left: 38.7%;
-	top: 37.7%;
-}
-.worldMap .spot.cpt {
-	left: 50%;
-	top: 67%;
-}
-.worldMap .spot.coj {
-	left: 89%;
-	top: 68%;
+  height:100%
 }
 
 #buffer {
   display: none;
+}
+
+.status canvas{
+  max-width: 100px;
+  max-height: 100px;
 }
 
 @media (min-width: 768px) {

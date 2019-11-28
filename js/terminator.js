@@ -134,12 +134,12 @@ WorldMap.prototype.createMap = function(){
 
 	for(var i = 0; i < this.placemarks.length ; i++){
 		p = this.placemarks[i];
-    d2x =this.wide/370; // Tuned for non-mercator stretch map
+    d2x =this.wide/365 ; // Tuned for non-mercator stretch map
 		if(!p.x){
 			p.x = (p.lon+180)*d2x;
       if (p.lat < 0){
         // Tuned for non-mercator stretch map
-        d2y = this.tall/240;
+        d2y = this.tall/220;
       } else {
         d2y = this.tall/190;
       }
@@ -164,7 +164,7 @@ WorldMap.prototype.createMap = function(){
 	// Float a transparent link on top of the credit text
 	if(typeof jQuery != 'undefined') {
 		if($('#'+this.id+'_credit').length == 0){
-			jQuery('body').append('<div id="'+this.id+'_credit" style="position:absolute;padding:0px;top:'+(off.top+parseInt(this.tall)-5-11)+';left:'+(off.left+5)+';z-index:20;"><a href="http://lcogt.net/network" style="margin:4px;font-size:11px;text-shadow: 0px 0px 4px '+((this.sun.dec < 0) ? 'white':'black')+';color:'+((this.sun.dec < 0) ? 'black':'white')+';text-decoration:none;" title="Created by the Las Cumbres Observatory Global Telescope">'+credit+'</a></div>');
+			jQuery('body').append('<div id="'+this.id+'_credit" style="position:absolute;padding:0px;top:'+(off.top+parseInt(this.tall)-5-11)+';left:'+(off.left+5)+';z-index:20;"><a href="https://lco.global" style="margin:4px;font-size:11px;text-shadow: 0px 0px 4px '+((this.sun.dec < 0) ? 'white':'black')+';color:'+((this.sun.dec < 0) ? 'black':'white')+';text-decoration:none;" title="Created by the Las Cumbres Observatory Global Telescope">'+credit+'</a></div>');
 		}
 		jQuery('body').append('<div id="'+this.id+'_framerate" style="position:absolute;padding:0px;bottom:5px;right:5px;z-index:20;font-size:12px;"></div>');
 	}
